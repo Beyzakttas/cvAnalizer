@@ -1,0 +1,247 @@
+.ats-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.preview-controls {
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: var(--radius-lg);
+}
+
+.controls-text {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.controls-text h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.controls-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-input);
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+.controls-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-print {
+  padding: 0.45rem 0.9rem !important;
+  font-size: 0.825rem !important;
+}
+
+.cv-document-wrapper {
+  padding: 4rem 2rem;
+  display: flex;
+  justify-content: center;
+  background: var(--bg-card); /* Use theme bg for a clean contrast */
+  overflow-y: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+/* The CV itself - Mimicking a white A4 page */
+.cv-document {
+  width: 210mm; 
+  min-height: 297mm;
+  padding: 2.54cm; /* Standard 1-inch margins */
+  background: white !important;
+  color: #1a1a1a !important;
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.4;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.cv-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 1.5rem;
+}
+
+.cv-header h1 {
+  font-size: 24pt;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.cv-contact {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 10pt;
+}
+
+.cv-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 12pt;
+  font-weight: 700;
+  border-bottom: 1px solid #333;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.cv-item {
+  margin-bottom: 1rem;
+}
+
+.cv-item-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.cv-item-sub {
+  font-size: 10pt;
+}
+
+.cv-item-desc {
+  margin-top: 0.5rem;
+  font-size: 10pt;
+}
+
+.cv-item-desc p {
+  margin-bottom: 0.25rem;
+}
+
+.skills-line {
+  font-size: 10pt;
+}
+
+.btn-english-cv {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  background: linear-gradient(135deg, #0077b5, #00a0dc);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.825rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 119, 181, 0.3);
+  white-space: nowrap;
+}
+
+.btn-english-cv:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 119, 181, 0.45);
+}
+
+.btn-turkish-cv {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  background: var(--bg-input);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-turkish-cv:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.lang-switcher-mini {
+  display: flex;
+  background: var(--bg-input);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-right: 1rem;
+}
+
+.btn-mini {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-mini.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.btn-mini:hover:not(.active) {
+  background: var(--bg-card);
+  color: var(--text-main);
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  .cv-document-wrapper {
+    background: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+  }
+  
+  .cv-document, .cv-document * {
+    visibility: visible !important;
+  }
+  
+  .cv-document {
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .preview-controls, .form-actions, .sidebar, .top-header, .bg-mesh, .nav-items {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .cv-document-wrapper {
+    padding: 1rem;
+  }
+  .cv-document {
+    width: 100%;
+    padding: 1rem;
+  }
+}

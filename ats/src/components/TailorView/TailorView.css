@@ -1,0 +1,228 @@
+.tailor-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.score-panel {
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(16, 185, 129, 0.1));
+}
+
+/* Progress Ring */
+.score-circle {
+  width: 160px;
+  height: 160px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-circle-bg {
+  stroke: var(--border);
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+  width: 160px;
+  height: 160px;
+}
+
+.progress-ring-circle {
+  transition: stroke-dasharray 1s ease-out;
+}
+
+.score-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.score-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.score-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.score-info h3 {
+  font-size: 1.5rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.score-info p {
+  color: var(--text-muted);
+  max-width: 400px;
+}
+
+.suggestions-approval-panel {
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(79, 70, 229, 0.05));
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.badge {
+  background: #f59e0b;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.suggestion-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.suggestion-card {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: var(--transition);
+}
+
+.suggestion-card:hover {
+  border-color: #f59e0b;
+  transform: translateY(-2px);
+}
+
+.suggestion-body h4 {
+  font-size: 1rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.suggestion-body p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.suggestion-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.btn-apply, .btn-dismiss {
+  flex: 1;
+  padding: 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+}
+
+.btn-apply {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-apply:hover {
+  background: var(--primary-hover);
+}
+
+.btn-dismiss {
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.btn-dismiss:hover {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.keywords-grid-panel {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.keyword-tag.missing {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.keyword-tag.matched {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: var(--accent);
+}
+
+.suggestions-panel {
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.suggestion-list {
+  list-style: none;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.suggestion-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
+.suggestion-list li strong {
+  color: var(--primary-hover);
+  margin-right: 0.5rem;
+}
+
+.suggestion-list li u {
+  text-decoration-color: var(--accent);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .analysis-grid {
+    grid-template-columns: 1fr;
+  }
+}

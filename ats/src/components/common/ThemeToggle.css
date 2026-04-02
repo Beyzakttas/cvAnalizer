@@ -1,0 +1,33 @@
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  z-index: 1000;
+  pointer-events: auto;
+  box-shadow: var(--shadow);
+}
+
+.theme-toggle:hover {
+  background: var(--bg-input);
+  border-color: var(--primary);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+.toggle-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.icon-sun { color: #f59e0b; }
+.icon-moon { color: #818cf8; }

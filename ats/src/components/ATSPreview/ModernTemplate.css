@@ -1,0 +1,107 @@
+/* Modern Template - Designer Layout */
+.cv-document.modern {
+  display: grid;
+  grid-template-columns: 1fr 2.5fr;
+  padding: 0 !important;
+  background: #fdfdfd !important;
+  color: #2c3e50 !important;
+  font-family: 'Outfit', sans-serif !important;
+  overflow: hidden;
+}
+
+.cv-document.modern .cv-header {
+  grid-column: 1 / -1;
+  background: #111;
+  color: white;
+  padding: 3rem;
+  margin: 0;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+}
+
+.cv-document.modern .cv-header h1 {
+  font-size: 32pt;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -2px;
+  color: white !important;
+}
+
+.cv-document.modern .cv-contact {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  font-size: 9pt;
+  justify-content: flex-start;
+}
+
+.cv-document.modern .cv-contact span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Sidebar Section */
+.cv-document.modern .cv-section:last-of-type {
+  background: #f8f9fa;
+  padding: 2.5rem;
+  height: 100%;
+}
+
+/* Main Column Content */
+.cv-document.modern section:not(:last-of-type) {
+  padding: 2.5rem;
+}
+
+.cv-document.modern .section-title {
+  color: var(--primary, #4f46e5);
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+  font-size: 14pt;
+  margin-bottom: 1.5rem;
+}
+
+.cv-document.modern .cv-item {
+  margin-bottom: 2rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.cv-document.modern .cv-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 4px;
+  height: 100%;
+  background: #eee;
+  border-radius: 2px;
+}
+
+.cv-document.modern .cv-item-header strong {
+  font-size: 13pt;
+  color: #111;
+}
+
+.cv-document.modern .cv-item-header span {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 9pt;
+}
+
+.cv-document.modern .skills-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Modern Template Print Adjustments */
+@media print {
+  .cv-document.modern {
+    grid-template-columns: 30% 70%;
+    -webkit-print-color-adjust: exact;
+  }
+}
