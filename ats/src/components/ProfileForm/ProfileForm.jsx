@@ -25,15 +25,12 @@ export const ProfileForm = ({ onNext }) => {
 
   const handleImportData = (data) => {
     if (!data) return;
-    // Import all personal info fields
+    // Import all personal info fields in one batch, but only non-empty ones
     if (data.personalInfo) {
-      const pi = data.personalInfo;
-      if (pi.fullName)  updatePersonalInfo({ fullName: pi.fullName });
-      if (pi.email)     updatePersonalInfo({ email: pi.email });
-      if (pi.phone)     updatePersonalInfo({ phone: pi.phone });
-      if (pi.location)  updatePersonalInfo({ location: pi.location });
-      if (pi.website)   updatePersonalInfo({ website: pi.website });
-      if (pi.summary)   updatePersonalInfo({ summary: pi.summary });
+      const filteredInfo = Object.fromEntries(
+        Object.entries(data.personalInfo).filter(([_, v]) => v && v.trim() !== '')
+      );
+      updatePersonalInfo(filteredInfo);
     }
     // Import experience
     if (data.experience?.length > 0) {

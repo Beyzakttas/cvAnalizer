@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
   /* Colors - Midnight Modern */
   --bg-main: #0a0a0c;
@@ -54,9 +56,4 @@
   --glass-blur: blur(12px);
   
   --shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.2);
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 }

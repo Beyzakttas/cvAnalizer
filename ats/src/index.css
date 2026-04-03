@@ -64,6 +64,14 @@ body {
   box-sizing: border-box;
 }
 
+@media print {
+  #root, body, html {
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+}
+
 h1,
 h2 {
   font-family: var(--heading);

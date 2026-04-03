@@ -25,6 +25,51 @@
   -webkit-text-fill-color: transparent;
 }
 
+.platform-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 0.4rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.platform-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.platform-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+
+.platform-tab.active {
+  background: var(--bg-card);
+  color: var(--primary);
+  border-color: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.platform-tab img {
+  filter: grayscale(1) opacity(0.7);
+  transition: all 0.2s;
+}
+
+.platform-tab.active img {
+  filter: grayscale(0) opacity(1);
+}
+
 .search-box {
   display: flex;
   gap: 1rem;

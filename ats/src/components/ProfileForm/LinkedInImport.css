@@ -212,12 +212,18 @@
 
 .preview-card {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.25rem;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .preview-avatar {
@@ -233,32 +239,78 @@
 }
 
 .preview-info h3 {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-main);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
 }
 
-.preview-info p {
-  font-size: 0.825rem !important;
+.preview-email {
+  font-size: 0.85rem !important;
   color: var(--text-muted) !important;
-  margin-bottom: 0.5rem;
+  margin: 0 !important;
 }
 
-.preview-badge {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  background: rgba(79, 70, 229, 0.1);
-  border: 1px solid rgba(79, 70, 229, 0.2);
-  border-radius: 20px;
-  font-size: 0.75rem;
+.preview-location {
+  font-size: 0.8rem !important;
+  color: var(--text-dim) !important;
+  margin-top: 0.15rem !important;
+}
+
+.preview-stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.stat-item:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.stat-count {
+  font-size: 1.1rem;
+  font-weight: 800;
   color: var(--primary);
-  font-weight: 600;
-  margin-right: 0.4rem;
 }
 
-.preview-badge.skills {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.2);
-  color: #34d399;
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.preview-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.preview-summary h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.preview-summary p {
+  font-size: 0.85rem !important;
+  color: var(--text-muted) !important;
+  margin: 0 !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

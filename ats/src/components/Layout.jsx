@@ -5,11 +5,11 @@ import './Layout.css';
 
 export const Layout = ({ children, activeStep, onStepChange }) => {
   const steps = [
-    { id: 'SEARCH', icon: <Search size={20} />, label: 'İş Bul' },
-    { id: 'PROFILE', icon: <User size={20} />, label: 'Profil' },
-    { id: 'ANALYZER', icon: <FileText size={20} />, label: 'İş İlanı' },
-    { id: 'TAILOR', icon: <ShieldCheck size={20} />, label: 'Analiz' },
-    { id: 'EXPORT', icon: <Download size={20} />, label: 'Dışa Aktar' },
+    { id: 'SEARCH', icon: <Search size={22} />, label: 'İş Ara' },
+    { id: 'PROFILE', icon: <User size={22} />, label: 'Profilim' },
+    { id: 'ANALYZER', icon: <Briefcase size={22} />, label: 'İş Tanımı' },
+    { id: 'TAILOR', icon: <ShieldCheck size={22} />, label: 'ATS Analizi' },
+    { id: 'EXPORT', icon: <Download size={22} />, label: 'Kaydet & Yazdır' },
   ];
 
   return (
@@ -17,7 +17,7 @@ export const Layout = ({ children, activeStep, onStepChange }) => {
       <nav className="sidebar glass">
         <div className="logo">
           <div className="logo-icon">ATS</div>
-          <span className="logo-text">CV Builder</span>
+          <span className="logo-text">Kariyer Mimarı</span>
         </div>
         <div className="nav-items">
           {steps.map((step) => (
@@ -42,12 +42,20 @@ export const Layout = ({ children, activeStep, onStepChange }) => {
       </nav>
       <main className="main-content">
         <header className="top-header glass">
-          <div className="header-info">
-            <span className="cv-brand">ATS Dostu CV Oluşturucu</span>
-            <h1>{steps.find(s => s.id === activeStep)?.label}</h1>
+          <div className="header-left">
+            <div className="header-info">
+              <h1>{steps.find(s => s.id === activeStep)?.label}</h1>
+            </div>
           </div>
-          <div className="user-profile">
-            <div className="avatar">BA</div>
+          
+          <div className="header-right">
+            <div className="user-profile-button glass-dark">
+              <div className="user-info">
+                <span className="user-name">Beyza Aktaş</span>
+                <span className="user-role">Süper Admin</span>
+              </div>
+              <div className="avatar">BA</div>
+            </div>
           </div>
         </header>
         <div className="content-area">

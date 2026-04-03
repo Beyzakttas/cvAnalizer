@@ -113,19 +113,38 @@ export const LinkedInImportModal = ({ isOpen, onClose, onImport }) => {
                 <span>Profil başarıyla okundu!</span>
               </div>
               <div className="preview-card">
-                <div className="preview-avatar">
-                  <User size={28} />
+                <div className="preview-header">
+                  <div className="preview-avatar">
+                    <User size={32} />
+                  </div>
+                  <div className="preview-info">
+                    <h3>{preview.personalInfo?.fullName || 'Ad Soyad'}</h3>
+                    <p className="preview-email">{preview.personalInfo?.email || 'E-posta bulunamadı'}</p>
+                    <p className="preview-location">{preview.personalInfo?.location || ''}</p>
+                  </div>
                 </div>
-                <div className="preview-info">
-                  <h3>{preview.personalInfo?.fullName || 'Ad Soyad'}</h3>
-                  <p>{preview.personalInfo?.email || ''}</p>
-                  {preview.experience?.length > 0 && (
-                    <span className="preview-badge">{preview.experience.length} deneyim bulundu</span>
-                  )}
-                  {preview.skills?.length > 0 && (
-                    <span className="preview-badge skills">{preview.skills.length} yetenek bulundu</span>
-                  )}
+
+                <div className="preview-stats">
+                  <div className="stat-item">
+                    <span className="stat-count">{preview.experience?.length || 0}</span>
+                    <span className="stat-label">Deneyim</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-count">{preview.education?.length || 0}</span>
+                    <span className="stat-label">Eğitim</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-count">{preview.skills?.length || 0}</span>
+                    <span className="stat-label">Yetenek</span>
+                  </div>
                 </div>
+
+                {preview.personalInfo?.summary && (
+                  <div className="preview-summary">
+                    <h4>Özet</h4>
+                    <p>{preview.personalInfo.summary.substring(0, 200)}...</p>
+                  </div>
+                )}
               </div>
             </div>
           ) : null}

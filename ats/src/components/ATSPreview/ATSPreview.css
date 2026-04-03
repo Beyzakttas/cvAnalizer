@@ -207,32 +207,44 @@
 }
 
 @media print {
-  body * {
-    visibility: hidden;
+  /* Hide UI elements */
+  .sidebar, .top-header, .preview-controls, .form-actions, .bg-mesh, .nav-items {
+    display: none !important;
   }
   
-  .cv-document-wrapper {
-    background: none !important;
+  /* Reset layout wrappers */
+  .layout-wrapper, .main-content, .content-area, .ats-preview-container, .cv-document-wrapper {
+    display: block !important;
     padding: 0 !important;
     margin: 0 !important;
     border: none !important;
-  }
-  
-  .cv-document, .cv-document * {
-    visibility: visible !important;
-  }
-  
-  .cv-document {
-    position: absolute;
-    left: 0;
-    top: 0;
-    box-shadow: none !important;
-    padding: 0 !important;
+    background: none !important;
+    overflow: visible !important;
     width: 100% !important;
+    height: auto !important;
   }
 
-  .preview-controls, .form-actions, .sidebar, .top-header, .bg-mesh, .nav-items {
-    display: none !important;
+  /* Actual document sizing */
+  .cv-document {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 297mm;
+    margin: 0 !important;
+    padding: 2cm !important;
+    box-shadow: none !important;
+    border: none !important;
+    position: static !important; /* Avoid absolute positioning issues */
+    visibility: visible !important;
+  }
+
+  .cv-document * {
+    visibility: visible !important;
+  }
+
+  /* Force white background and black text for better contrast in print */
+  body {
+    background-color: white !important;
+    color: black !important;
   }
 }
 

@@ -13,51 +13,61 @@ export const parseLinkedInText = (text) => {
     skills: []
   };
 
-  // Clean up Jina markdown artifacts
-  const cleanText = text
-    .replace(/#+\s/g, '')           // Remove markdown headers
-    .replace(/\*\*/g, '')           // Remove bold markers
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove markdown links
-    .replace(/---+/g, '')           // Remove dividers
-    .trim();
+  // Clean up Jina markdown artifacts and common LinkedIn noise
+  const cleanLines = text
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => {
+      const lower = line.toLowerCase();
+      // Remove Jina AI artifacts and LinkedIn meta-info
+      if (lower.startsWith('markdown content:') || lower.startsWith('url:') || lower.startsWith('title:')) return false;
+      if (lower.includes('jina ai') || lower.includes('reader') || lower.includes('url: http')) return false;
+      if (lower === '1st' || lower === '2nd' || lower === '3rd+' || lower === 'follow') return false;
+      if (lower.includes('degree connection') || lower.includes('followers')) return false;
+      if (lower.startsWith('![') || lower.startsWith('[') && lower.endsWith(']')) return false; // Images/Icons
+      return line.length > 0;
+    });
 
-  const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l.length > 1);
+  const fullText = cleanLines.join('\n');
+  const cleanTextForRegex = fullText.replace(/#+\s/g, '').replace(/\*\*/g, '');
 
   // --- 1. Extract Email ---
-  const emailMatch = cleanText.match(/[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,}/);
+  const emailMatch = fullText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
   if (emailMatch) data.personalInfo.email = emailMatch[0];
 
   // --- 2. Extract Phone ---
-  const phoneMatch = cleanText.match(/(\+?\d[\d\s\-().]{7,15}\d)/);
+  // More specific phone regex to avoid matching dates or random numbers
+  const phoneMatch = fullText.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
   if (phoneMatch) data.personalInfo.phone = phoneMatch[0].trim();
 
   // --- 3. Extract LinkedIn URL ---
-  const linkedinMatch = cleanText.match(/linkedin\.com\/in\/[\w-]+/i);
+  const linkedinMatch = fullText.match(/linkedin\.com\/in\/[\w-]+/i);
   if (linkedinMatch) data.personalInfo.website = 'https://www.' + linkedinMatch[0];
 
   // --- 4. Extract Full Name ---
-  // Usually the first non-URL, non-header line
-  for (const line of lines) {
-    if (
-      line.length > 2 && line.length < 80 &&
-      !line.includes('linkedin') && !line.includes('http') &&
-      !line.includes('@') && !line.match(/^\d/) &&
-      !line.toLowerCase().includes('experience') &&
-      !line.toLowerCase().includes('education') &&
-      !line.toLowerCase().includes('skills')
-    ) {
-      data.personalInfo.fullName = line;
-      break;
-    }
+  // Priority: The very first non-noise line is usually the name
+  const nameCandidates = cleanLines.filter(line => {
+    const l = line.toLowerCase().replace(/[#*]/g, '').trim();
+    if (l.length < 2 || l.length > 50) return false;
+    if (l.includes('linkedin') || l.includes('http') || l.includes('jina') || l.includes('reader') || l.includes('markdown content')) return false;
+    if (l.includes('degree') || l.includes('connection') || l.includes('follow') || l.includes('üyelik')) return false;
+    if (l.includes('remove photo') || l.includes('skip to') || l.includes('toggle') || l.includes('navigation')) return false;
+    if (l.includes('search') || l.includes('mesaj') || l.includes('bildirimler') || l.includes('ana sayfa')) return false;
+    if (['experience', 'education', 'skills', 'about', 'hakkımda', 'hakkında', 'deneyim', 'yetenekler', 'profil', 'deneyimler', 'photo', 'search'].includes(l)) return false;
+    if (l.match(/^\d/)) return false; // Starts with digit
+    return true;
+  });
+
+  if (nameCandidates.length > 0) {
+    data.personalInfo.fullName = nameCandidates[0].replace(/[#*]/g, '').trim();
   }
 
   // --- 5. Section Detection ---
   const SECTION_HEADERS = {
-    about:      /(about|hakkımda|profil özeti|summary|özet)/i,
-    experience: /(experience|deneyim|iş deneyimi|work history)/i,
-    education:  /(education|eğitim|öğrenim)/i,
-    skills:     /(skills|yetenekler|yetkinlikler|competencies)/i,
-    languages:  /(languages|diller)/i,
+    about:      /(about|hakkımda|hakkında|profil özeti|summary|özet|about me|professional summary)/i,
+    experience: /(experience|deneyim|deneyimler|iş deneyimi|iş tecrübesi|work history|professional experience)/i,
+    education:  /(education|eğitim|öğrenim|öğrenim bilgileri|eğitim bilgileri|academic history)/i,
+    skills:     /(skills|yetenekler|yetkinlikler|competencies|skills & endorsements|yetenekler ve onaylar)/i,
   };
 
   let currentSection = '';
@@ -65,122 +75,109 @@ export const parseLinkedInText = (text) => {
   let currentExpBlock = null;
   let currentEduBlock = null;
 
-  // Date pattern: "2020 - 2023", "Jan 2020 - Mar 2022", "2021 – Present"
+  // Date pattern: Jan 2020 - Jan 2023, 2020 - 2023, 2021 – Present, Oca 2020 - Şub 2023
   const DATE_PATTERN = /(\d{4}|\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara)\b[\w\s,]*)[\s]*[-–—][\s]*(\d{4}|Present|Günümüz|present|günümüz|halen|Halen|devam)/i;
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+  for (let i = 0; i < cleanLines.length; i++) {
+    let line = cleanLines[i].replace(/[#*]/g, '').trim();
     const lower = line.toLowerCase();
 
-    // Detect section changes
-    let sectionChanged = false;
+    // Skip section headers
+    let isHeader = false;
     for (const [section, regex] of Object.entries(SECTION_HEADERS)) {
-      if (regex.test(lower) && line.length < 60) {
-        // Save previous block
+      if (regex.test(lower) && line.length < 50) {
+        // Save previous blocks
         if (currentExpBlock?.title) data.experience.push(currentExpBlock);
-        if (currentEduBlock?.degree) data.education.push(currentEduBlock);
+        if (currentEduBlock?.school) data.education.push(currentEduBlock);
         currentExpBlock = null;
         currentEduBlock = null;
         currentSection = section;
-        sectionChanged = true;
+        isHeader = true;
         break;
       }
     }
-    if (sectionChanged) continue;
+    if (isHeader) continue;
 
-    // --- About Section ---
     if (currentSection === 'about') {
-      if (line.length > 20) aboutLines.push(line);
-    }
-
-    // --- Experience Section ---
+      if (line.length > 5) aboutLines.push(line);
+    } 
+    
     else if (currentSection === 'experience') {
       const dateMatch = line.match(DATE_PATTERN);
-
-      if (dateMatch && currentExpBlock) {
-        // Date line - attach to current block
-        currentExpBlock.date = line.replace(/\s+/g, ' ').trim();
-      } else if (line.length > 3 && line.length < 100 && !dateMatch) {
-        const nextLine = lines[i + 1] || '';
-        const isTitle = !line.startsWith('•') && !line.startsWith('-');
-
-        if (isTitle) {
-          // Save previous block
-          if (currentExpBlock?.title && currentExpBlock?.company) {
-            data.experience.push({ ...currentExpBlock, id: Date.now() + Math.random() });
-          }
-          currentExpBlock = { title: '', company: '', date: '', description: '', id: Date.now() };
-
-          if (currentExpBlock.title === '') {
-            currentExpBlock.title = line;
-          } else if (currentExpBlock.company === '') {
-            currentExpBlock.company = line;
-          }
-        } else if (currentExpBlock) {
-          currentExpBlock.description = (currentExpBlock.description + '\n' + line.replace(/^[•\-]\s*/, '')).trim();
-        }
-      } else if (currentExpBlock && line.startsWith('•') || line.startsWith('-')) {
-        if (currentExpBlock) {
-          currentExpBlock.description = (currentExpBlock.description + '\n' + line.replace(/^[•\-]\s*/, '')).trim();
+      
+      if (dateMatch) {
+         if (currentExpBlock) currentExpBlock.date = line;
+      } else if (line.startsWith('•') || line.startsWith('-') || line.startsWith('*')) {
+         if (currentExpBlock) {
+           const point = line.replace(/^[•\-*]\s*/, '').trim();
+           if (point) {
+             currentExpBlock.description = (currentExpBlock.description + (currentExpBlock.description ? '\n' : '') + point).trim();
+           }
+         }
+      } else if (line.length > 2 && line.length < 120) {
+        // If we don't have a title yet, or if this line looks like a new title
+        if (!currentExpBlock || (currentExpBlock.title && currentExpBlock.company && !dateMatch)) {
+          if (currentExpBlock?.title) data.experience.push(currentExpBlock);
+          currentExpBlock = { title: line, company: '', date: '', description: '', id: Date.now() + i };
+        } else if (currentExpBlock && !currentExpBlock.company) {
+          currentExpBlock.company = line;
         }
       }
     }
 
-    // --- Education Section ---
     else if (currentSection === 'education') {
-      if (line.length > 3 && line.length < 150) {
-        if (!currentEduBlock) {
-          currentEduBlock = { degree: '', school: '', date: '', id: Date.now() };
-          currentEduBlock.school = line;
-        } else if (!currentEduBlock.degree) {
+      const dateMatch = line.match(DATE_PATTERN);
+      if (dateMatch) {
+        if (currentEduBlock) currentEduBlock.date = line;
+      } else if (line.length > 2 && line.length < 120) {
+        if (!currentEduBlock || (currentEduBlock.school && currentEduBlock.degree)) {
+          if (currentEduBlock?.school) data.education.push(currentEduBlock);
+          currentEduBlock = { school: line, degree: '', date: '', id: Date.now() + i };
+        } else if (currentEduBlock && !currentEduBlock.degree) {
           currentEduBlock.degree = line;
-        } else if (!currentEduBlock.date && line.match(DATE_PATTERN)) {
-          currentEduBlock.date = line;
-          data.education.push({ ...currentEduBlock });
-          currentEduBlock = null;
         }
       }
     }
 
-    // --- Skills Section ---
     else if (currentSection === 'skills') {
-      // Skills can be comma-separated, bullet-pointed, or one per line
       const cleaned = line.replace(/^[•\-*]\s*/, '').trim();
       if (cleaned.includes(',')) {
         cleaned.split(',').forEach(s => {
           const skill = s.trim();
-          if (skill.length > 1 && skill.length < 50) data.skills.push(skill);
+          if (skill.length > 1 && skill.length < 60) data.skills.push(skill);
         });
-      } else if (cleaned.length > 1 && cleaned.length < 50) {
+      } else if (cleaned.length > 1 && cleaned.length < 60) {
         data.skills.push(cleaned);
       }
     }
   }
 
-  // Save last open blocks
-  if (currentExpBlock?.title) {
-    data.experience.push({ ...currentExpBlock, id: Date.now() });
-  }
-  if (currentEduBlock?.degree || currentEduBlock?.school) {
-    data.education.push({ ...currentEduBlock, id: Date.now() });
-  }
+  // Final push removals
+  if (currentExpBlock?.title) data.experience.push(currentExpBlock);
+  if (currentEduBlock?.school) data.education.push(currentEduBlock);
 
-  // Set summary from about section
+  // Set summary
   if (aboutLines.length > 0) {
-    data.personalInfo.summary = aboutLines.slice(0, 5).join(' ').substring(0, 800);
+    data.personalInfo.summary = aboutLines.slice(0, 8).join(' ').substring(0, 1000);
   }
 
-  // Deduplicate skills
-  data.skills = [...new Set(data.skills)].filter(s => s.length > 1).slice(0, 40);
+  // Filter out common noise from experience/education
+  data.experience = data.experience.filter(exp => {
+    const t = exp.title.toLowerCase();
+    return !t.includes('deneyim') && !t.includes('experience') && !t.includes('skills') && t.length > 2;
+  });
 
-  // Limit experience and education
-  data.experience = data.experience.slice(0, 15);
-  data.education = data.education.slice(0, 5);
+  data.education = data.education.filter(edu => {
+    const s = edu.school.toLowerCase();
+    return !s.includes('eğitim') && !s.includes('education') && s.length > 2;
+  });
 
-  // If nothing was found at all, return null
-  if (!data.personalInfo.fullName && data.skills.length === 0 && data.experience.length === 0) {
-    return null;
+
+  // Fallback: If no name found, use the first cleaned line that isn't a section header
+  if (!data.personalInfo.fullName && cleanLines.length > 0) {
+    data.personalInfo.fullName = cleanLines[0].replace(/[#*]/g, '');
   }
 
   return data;
 };
+
