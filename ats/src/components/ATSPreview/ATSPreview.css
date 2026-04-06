@@ -63,12 +63,16 @@
   min-height: 297mm;
   padding: 2.54cm; /* Standard 1-inch margins */
   background: white !important;
-  color: #1a1a1a !important;
+  color: #1a1a1a !important; /* Forces black text in all themes */
   font-family: 'Inter', system-ui, sans-serif;
   line-height: 1.4;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
   position: relative;
   transition: transform 0.3s ease;
+}
+
+[data-theme='dark'] .cv-document {
+  color: #1a1a1a !important;
 }
 
 .cv-header {
@@ -94,6 +98,12 @@
 
 .cv-section {
   margin-bottom: 2rem;
+}
+
+.cv-summary-section p {
+  font-size: 9.5pt;
+  line-height: 1.4;
+  margin: 0;
 }
 
 .section-title {
@@ -206,45 +216,110 @@
   color: var(--text-main);
 }
 
+/* Edit Mode Button */
+.btn-edit-mode {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-input);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-edit-mode.active {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.btn-edit-mode:hover:not(.active) {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+/* Editable Field Indicators */
+.cv-document.editing .editable-field {
+  outline: 1px dashed #f59e0b;
+  outline-offset: 2px;
+  cursor: text;
+  min-width: 20px;
+  min-height: 1.2em;
+  transition: all 0.2s;
+}
+
+.cv-document.editing .editable-field:focus {
+  outline: 2px solid #f59e0b;
+  background: rgba(245, 158, 11, 0.05);
+}
+
 @media print {
+  .cv-document.editing .editable-field {
+    outline: none !important;
+    background: transparent !important;
+  }
+  /* Remove browser headers/footers (Date, URL, Title) */
+  @page {
+    margin: 0;
+  }
+  
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
   /* Hide UI elements */
-  .sidebar, .top-header, .preview-controls, .form-actions, .bg-mesh, .nav-items {
+  .sidebar, 
+  .top-header, 
+  .preview-controls, 
+  .form-actions, 
+  .bg-mesh, 
+  .nav-items,
+  .no-print {
     display: none !important;
   }
   
   /* Reset layout wrappers */
-  .layout-wrapper, .main-content, .content-area, .ats-preview-container, .cv-document-wrapper {
+  .layout-wrapper, 
+  .main-content, 
+  .content-area, 
+  .ats-preview-container, 
+  .cv-document-wrapper {
     display: block !important;
     padding: 0 !important;
     margin: 0 !important;
     border: none !important;
-    background: none !important;
+    background: white !important;
     overflow: visible !important;
     width: 100% !important;
-    height: auto !important;
+    min-height: auto !important;
   }
 
-  /* Actual document sizing */
+  /* Actual document sizing - Ensuring proper margins on paper */
   .cv-document {
     width: 100% !important;
     height: auto !important;
     min-height: 297mm;
     margin: 0 !important;
-    padding: 2cm !important;
+    padding: 2.54cm !important; /* Forces document-level margins since @page margin is 0 */
     box-shadow: none !important;
     border: none !important;
-    position: static !important; /* Avoid absolute positioning issues */
+    position: static !important;
     visibility: visible !important;
+    background: white !important;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
   }
 
   .cv-document * {
     visibility: visible !important;
-  }
-
-  /* Force white background and black text for better contrast in print */
-  body {
-    background-color: white !important;
-    color: black !important;
   }
 }
 

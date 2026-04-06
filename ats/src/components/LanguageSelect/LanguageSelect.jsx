@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCVStore } from '../../store/useCVStore';
+import { useCVStore } from '../../store/CVContext';
 import { Globe, Languages, ArrowRight, Sparkles, Search, CheckCircle, Linkedin } from 'lucide-react';
 import './LanguageSelect.css';
 

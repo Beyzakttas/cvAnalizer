@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect } from 'react';
-import { useCVStore } from '../../store/useCVStore';
+import { useCVStore } from '../../store/CVContext';
 import { extractKeywords } from '../../utils/keywordExtractor';
 import { generateSuggestions } from '../../utils/suggestionEngine';
 import { ShieldCheck, AlertCircle, CheckCircle, Info, ArrowRight, ArrowLeft, Lightbulb, Zap, PlusCircle, XCircle } from 'lucide-react';
@@ -160,11 +160,11 @@ export const TailorView = ({ onNext, onBack }) => {
         </ul>
       </section>
 
-      <div className="form-actions">
-        <button onClick={onBack} className="btn-outline">
+      <div className="form-actions" style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', borderTop: '1px solid var(--glass-border)' }}>
+        <button type="button" onClick={onBack} className="btn-outline">
           <ArrowLeft size={20} /> Geri
         </button>
-        <button onClick={onNext} className="btn-primary">
+        <button type="button" onClick={onNext} className="btn-primary">
           Dışa Aktar & Onayla <ArrowRight size={20} />
         </button>
       </div>

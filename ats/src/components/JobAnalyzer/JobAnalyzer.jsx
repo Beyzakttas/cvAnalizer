@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useCVStore } from '../../store/useCVStore';
+import { useCVStore } from '../../store/CVContext';
 import { extractKeywords } from '../../utils/keywordExtractor';
-import { Search, Sparkles, Link as LinkIcon, ArrowRight, ArrowLeft, CheckCircle, Plus } from 'lucide-react';
+import { fetchJobDescription } from '../../utils/jinaService';
+import { Search, Sparkles, Link as LinkIcon, ArrowRight, ArrowLeft, CheckCircle, Plus, Minus } from 'lucide-react';
 import './JobAnalyzer.css';
 
 export const JobAnalyzer = ({ onNext, onBack, initialUrl }) => {
-  const { cvData, setJobDescription, setSkills, addSkill } = useCVStore();
+  const { cvData, setJobDescription, setSkills, addSkill, removeSkill } = useCVStore();
   const [jdText, setJdText] = useState(cvData.jobDescription || '');
   const [jobUrl, setJobUrl] = useState(initialUrl || '');
   const [keywords, setKeywords] = useState([]);
@@ -25,16 +26,25 @@ export const JobAnalyzer = ({ onNext, onBack, initialUrl }) => {
 
     setIsFetching(true);
     try {
-      const response = await fetch(`https://r.jina.ai/${encodeURIComponent(targetUrl)}`);
-      const text = await response.text();
-      const cleanText = text.replace(/\[.*?\]/g, '').replace(/\(http.*?\)/g, '');
+      const cleanText = await fetchJobDescription(targetUrl);
       setJdText(cleanText);
       const extracted = extractKeywords(cleanText);
       setKeywords(extracted);
       setJobDescription(cleanText);
+      
+      // Auto-Taylor: Add top missing keywords (limit to 8 to avoid overwhelming)
+      const currentSkills = cvData.skills.map(s => s.toLowerCase());
+      const newlyFound = extracted.filter(k => !currentSkills.includes(k.toLowerCase())).slice(0, 8);
+      newlyFound.forEach(skill => addSkill(skill));
+
+      setJobUrl(''); // Clear the URL input after successful fetch
     } catch (err) {
       console.error('Fetch error:', err);
-      alert('İçerik alınamadı. Lütfen manuel yapıştırın.');
+      if (err.message === 'CONTENT_BLOCKED') {
+        alert('Bu site (LinkedIn vb.) otomatik veri çekilmesini engelliyor. Lütfen ilan metnini kopyalayıp alttaki kutuya direkt yapıştırın.');
+      } else {
+        alert('İçerik alınamadı. Lütfen manuel yapıştırın veya internet bağlantınızı kontrol edin.');
+      }
     } finally {
       setIsFetching(false);
     }
@@ -45,6 +55,12 @@ export const JobAnalyzer = ({ onNext, onBack, initialUrl }) => {
     const extracted = extractKeywords(jdText);
     setKeywords(extracted);
     setJobDescription(jdText);
+    
+    // Auto-Taylor: Add top missing keywords on manual update too
+    const currentSkills = cvData.skills.map(s => s.toLowerCase());
+    const newlyFound = extracted.filter(k => !currentSkills.includes(k.toLowerCase())).slice(0, 8);
+    newlyFound.forEach(skill => addSkill(skill));
+
     setTimeout(() => {
       setIsAnalyzing(false);
     }, 1500);
@@ -71,6 +87,7 @@ export const JobAnalyzer = ({ onNext, onBack, initialUrl }) => {
               onChange={(e) => setJobUrl(e.target.value)}
             />
             <button 
+              type="button"
               onClick={() => handleFetchUrl()} 
               disabled={isFetching}
               className="btn-fetch"
@@ -86,7 +103,7 @@ export const JobAnalyzer = ({ onNext, onBack, initialUrl }) => {
             className="jd-textarea"
           />
 
-          <button onClick={handleAnaliz} className="btn-primary-large" disabled={isAnalyzing}>
+          <button type="button" onClick={handleAnaliz} className="btn-primary-large" disabled={isAnalyzing}>
             {isAnalyzing ? <span className="loader" /> : <><Sparkles size={20} /> Analiz Et</>}
           </button>
         </div>
@@ -120,11 +137,17 @@ export const JobAnalyzer = ({ onNext, onBack, initialUrl }) => {
               </div>
 
               <div className="keyword-section matching">
-                <h4>CV'nizde Bulunanlar</h4>
+                <h4>CV'nizde Bulunanlar / Eklenenler</h4>
+                <p className="section-hint">Yanlış eklenenleri buradaki çarpıdan çıkarabilirsiniz.</p>
                 <div className="keyword-list">
                   {matchingKeywords.length > 0 ? (
                     matchingKeywords.map((k, i) => (
-                      <span key={i} className="keyword-tag match">{k}</span>
+                      <div key={i} className="keyword-tag match">
+                        <span>{k}</span>
+                        <button onClick={() => removeSkill(k)} title="CV'den Çıkar">
+                          <Minus size={14} />
+                        </button>
+                      </div>
                     ))
                   ) : (
                     <p className="dim-text">Henüz eşleşen ortak kelime yok.</p>
@@ -132,9 +155,7 @@ export const JobAnalyzer = ({ onNext, onBack, initialUrl }) => {
                 </div>
               </div>
 
-              <button onClick={onNext} className="btn-next-step">
-                Analize Devam Et <ArrowRight size={20} />
-              </button>
+              {/* Next button removed from here to be moved to the shared footer */}
             </div>
           ) : (
             <div className="empty-results glass">
@@ -146,9 +167,14 @@ export const JobAnalyzer = ({ onNext, onBack, initialUrl }) => {
       </div>
 
       <div className="step-actions">
-        <button onClick={onBack} className="btn-back">
+        <button type="button" onClick={onBack} className="btn-back">
           <ArrowLeft size={18} /> Geri
         </button>
+        {keywords.length > 0 && (
+          <button type="button" onClick={onNext} className="btn-next-step">
+            Analize Devam Et <ArrowRight size={20} />
+          </button>
+        )}
       </div>
     </div>
   );

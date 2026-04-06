@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useCVStore } from '../../store/useCVStore';
+import { useCVStore } from '../../store/CVContext';
 import './ThemeToggle.css';
 
 export const ThemeToggle = () => {

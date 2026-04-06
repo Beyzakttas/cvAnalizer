@@ -1,15 +1,17 @@
 import React, { useState, useRef } from 'react';
-import { useCVStore } from '../../store/useCVStore';
+import { useCVStore } from '../../store/CVContext';
 import { 
   User, Mail, Phone, MapPin, Plus, Trash2, ArrowRight, 
   Sparkles, Wand2, CloudDownload, CloudUpload, Zap, Trash
 } from 'lucide-react';
 import { LinkedInImportModal } from './LinkedInImportModal';
+import { VersionControl } from './VersionControl';
 import './ProfileForm.css';
 
 export const ProfileForm = ({ onNext }) => {
   const { 
     cvData, updatePersonalInfo, addExperience, removeExperience, 
+    addEducation, removeEducation,
     setSkills, fillSampleData, generateAISummary,
     exportData, importData
   } = useCVStore();
@@ -17,6 +19,7 @@ export const ProfileForm = ({ onNext }) => {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [showAiMenu, setShowAiMenu] = useState(false);
   const [newExp, setNewExp] = useState({ title: '', company: '', date: '', description: '' });
+  const [newEdu, setNewEdu] = useState({ school: '', degree: '', date: '' });
   const fileInputRef = useRef(null);
 
   const handlePersonalInfoChange = (e) => {
@@ -66,6 +69,13 @@ export const ProfileForm = ({ onNext }) => {
     }
   };
 
+  const handleAddEdu = () => {
+    if (newEdu.school && newEdu.degree) {
+      addEducation({ ...newEdu, id: Date.now() });
+      setNewEdu({ school: '', degree: '', date: '' });
+    }
+  };
+
   return (
     <div className="profile-form-container">
       <div className="profile-header glass animate-fade-in">
@@ -82,6 +92,8 @@ export const ProfileForm = ({ onNext }) => {
           </button>
         </div>
       </div>
+
+      <VersionControl />
 
       <div className="profile-grid">
         <section className="form-section glass animate-fade-in">
@@ -153,11 +165,37 @@ export const ProfileForm = ({ onNext }) => {
           </div>
           <div className="add-experience-compact">
             <div className="input-grid">
-              <input placeholder="Pozisyon" value={newExp.title} onChange={e => setNewExp({...newExp, title: e.target.value})} />
+              <input placeholder="Pozisyon (Kıdemli Developer vb.)" value={newExp.title} onChange={e => setNewExp({...newExp, title: e.target.value})} />
               <input placeholder="Şirket" value={newExp.company} onChange={e => setNewExp({...newExp, company: e.target.value})} />
-              <input placeholder="Tarih" value={newExp.date} onChange={e => setNewExp({...newExp, date: e.target.value})} />
+              <input placeholder="Tarih (2020 - 2024)" value={newExp.date} onChange={e => setNewExp({...newExp, date: e.target.value})} />
             </div>
-            <button onClick={handleAddExp} className="btn-secondary"><Plus size={16} /> Ekle</button>
+            <textarea placeholder="Açıklama (opsiyonel)" value={newExp.description} onChange={e => setNewExp({...newExp, description: e.target.value})} rows={2} style={{ marginTop: '0.5rem' }} />
+            <button onClick={handleAddExp} className="btn-secondary" style={{ marginTop: '0.5rem' }}><Plus size={16} /> Deneyim Ekle</button>
+          </div>
+        </section>
+
+        <section className="form-section glass animate-fade-in delay-200">
+          <div className="section-title">
+            <Plus size={20} /> <h2>Eğitim Bilgileri</h2>
+          </div>
+          <div className="experience-list">
+            {cvData.education.map((edu) => (
+              <div key={edu.id} className="experience-card">
+                <div className="exp-info">
+                  <h3>{edu.school}</h3>
+                  <span>{edu.degree} ({edu.date})</span>
+                </div>
+                <button onClick={() => removeEducation(edu.id)} className="btn-icon danger"><Trash2 size={18} /></button>
+              </div>
+            ))}
+          </div>
+          <div className="add-experience-compact">
+            <div className="input-grid">
+              <input placeholder="Okul / Üniversite" value={newEdu.school} onChange={e => setNewEdu({...newEdu, school: e.target.value})} />
+              <input placeholder="Bölüm / Derece" value={newEdu.degree} onChange={e => setNewEdu({...newEdu, degree: e.target.value})} />
+              <input placeholder="Tarih (2016 - 2020)" value={newEdu.date} onChange={e => setNewEdu({...newEdu, date: e.target.value})} />
+            </div>
+            <button onClick={handleAddEdu} className="btn-secondary" style={{ marginTop: '0.5rem' }}><Plus size={16} /> Eğitim Ekle</button>
           </div>
         </section>
       </div>

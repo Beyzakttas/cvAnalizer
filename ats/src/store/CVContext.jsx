@@ -16,19 +16,20 @@ const INITIAL_DATA = {
   education: [],
   skills: [],
   jobDescription: '',
-  suggestions: []
+  suggestions: [],
+  savedVersions: []
 };
 
 const SUMMARY_TEMPLATES = {
   tr: {
-    manager: "Deneyimli yönetici ve stratejist. {skills} konularında uzmanlığa sahip, ekip yönetiminde başarılı ve hedef odaklı bir profesyonel.",
-    tech: "Teknoloji tutkunu ve çözüm odaklı mühendis. {skills} ekosisteminde derinlemesine bilgi sahibi, ölçeklenebilir sistemler tasarlama tecrübesine sahip.",
-    creative: "Vizyoner ve yenilikçi profesyonel. {skills} alanlarında kreatif çözümler üreten, kullanıcı deneyimini ön planda tutan bir tasarımcı."
+    manager: "Stratejik vizyon sahibi, sonuç odaklı ve deneyimli yönetici. {skills} alanlarında derin uzmanlığa sahip olup, karmaşık projeleri yönetme, çapraz fonksiyonlu ekiplere liderlik etme ve operasyonel verimliliği artırma konularında kanıtlanmış bir başarı geçmişine sahiptir. Değişen pazar koşullarına hızla uyum saglayan, analitik düşünme yeteneği gelişmiş ve kurumsal hedeflere ulaşmada proaktif bir profesyonel.",
+    tech: "Yenilikçi teknolojilere tutkuyla bağlı, çözüm odaklı ve kıdemli teknoloji uzmanı. {skills} ekosisteminde geniş kapsamlı teknik bilgi birikimine sahip olup, yüksek performanslı ve ölçeklenebilir sistem mimarileri tasarlama, geliştirme ve optimize etme konusunda deneyimlidir. Kod kalitesine önem veren, güncel yazılım disiplinlerini titizlikle uygulayan ve karmaşık teknik zorlukları yaratıcı mühendislik çözümleriyle aşabilen bir disipline sahiptir.",
+    creative: "Vizyoner, yenilikçi ve estetik duyarlılığı yüksek tasarım profesyoneli. {skills} alanlarında yaratıcı konseptler geliştirme, kullanıcı deneyimini (UX) modern tasarım trendleriyle harmanlama ve marka kimliğini güçlendiren dijital varlıklar oluşturma konusunda uzmandır. Tasarımı bir problem çözme aracı olarak gören, detaylara önem veren ve kullanıcı merkezli yaklaşımlarla etkileyici görsel hikayeler yaratan bir yaratıcı liderdir."
   },
   en: {
-    manager: "Experienced manager and strategist. Expert in {skills}, with a track record of leading teams and achieving business goals.",
-    tech: "Technology enthusiast and solution-oriented engineer. Deep knowledge in {skills}, specialized in building scalable and performant architectures.",
-    creative: "Visionary and innovative professional. Creating creative solutions in {skills}, with a primary focus on user experience."
+    manager: "Strategic visionary and results-driven senior leader with extensive expertise in {skills}. Proven track record of managing complex projects, leading cross-functional teams, and driving operational excellence. Highly adaptable professional with strong analytical thinking skills, dedicated to achieving organizational objectives through proactive leadership and effective stakeholder management.",
+    tech: "Passionate and solution-oriented technology expert with deep knowledge in the {skills} ecosystem. Specialized in designing, developing, and optimizing high-performance, scalable system architectures. Dedicated to code quality and best practices, with a creative approach to overcoming complex technical challenges through innovative engineering solutions.",
+    creative: "Visionary and innovative design professional with a high aesthetic sensibility. Expert in developing creative concepts within {skills}, blending user experience (UX) with modern design trends to create impactful digital assets. Approaching design as a problem-solving tool with a keen eye for detail and a focus on crafting compelling visual stories through user-centric methodologies."
   }
 };
 
@@ -76,11 +77,13 @@ export const CVProvider = ({ children }) => {
       return {
         ...INITIAL_DATA,
         ...parsed,
+        jobDescription: '', // Reset on refresh/load
+        suggestions: [], // Reset on refresh/load
         personalInfo: { ...INITIAL_DATA.personalInfo, ...(parsed.personalInfo || {}) },
         experience: Array.isArray(parsed.experience) ? parsed.experience : [],
         education: Array.isArray(parsed.education) ? parsed.education : [],
         skills: Array.isArray(parsed.skills) ? parsed.skills : [],
-        suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
+        savedVersions: Array.isArray(parsed.savedVersions) ? parsed.savedVersions : [],
         theme: parsed.theme || 'dark'
       };
     } catch (e) {
@@ -139,6 +142,20 @@ export const CVProvider = ({ children }) => {
 
   const removeEducation = (id) => {
     setCvData(prev => ({ ...prev, education: prev.education.filter(e => e.id !== id) }));
+  };
+
+  const updateExperience = (id, updatedExp) => {
+    setCvData(prev => ({
+      ...prev,
+      experience: prev.experience.map(e => e.id === id ? { ...e, ...updatedExp } : e)
+    }));
+  };
+
+  const updateEducation = (id, updatedEdu) => {
+    setCvData(prev => ({
+      ...prev,
+      education: prev.education.map(e => e.id === id ? { ...e, ...updatedEdu } : e)
+    }));
   };
 
   const setLanguage = (lang) => {
@@ -200,15 +217,50 @@ export const CVProvider = ({ children }) => {
     linkElement.click();
   };
 
-  const importData = (jsonStr) => {
+  const importData = (data) => {
     try {
-      const parsed = JSON.parse(jsonStr);
+      const parsed = typeof data === 'string' ? JSON.parse(data) : data;
       setCvData({ ...INITIAL_DATA, ...parsed });
       return true;
     } catch (e) {
       console.error('Import failed:', e);
       return false;
     }
+  };
+
+  const saveVersion = (name) => {
+    const newVersion = {
+      id: Date.now(),
+      name,
+      lastModified: new Date().toISOString(),
+      personalInfo: { ...cvData.personalInfo },
+      experience: [...cvData.experience],
+      education: [...cvData.education],
+      skills: [...cvData.skills]
+    };
+    setCvData(prev => ({
+      ...prev,
+      savedVersions: [...prev.savedVersions, newVersion]
+    }));
+  };
+
+  const loadVersion = (id) => {
+    const version = cvData.savedVersions.find(v => v.id === id);
+    if (!version) return;
+    setCvData(prev => ({
+      ...prev,
+      personalInfo: { ...version.personalInfo },
+      experience: [...version.experience],
+      education: [...version.education],
+      skills: [...version.skills]
+    }));
+  };
+
+  const deleteVersion = (id) => {
+    setCvData(prev => ({
+      ...prev,
+      savedVersions: prev.savedVersions.filter(v => v.id !== id)
+    }));
   };
 
   return (
@@ -228,8 +280,13 @@ export const CVProvider = ({ children }) => {
       removeSkill,
       addExperience, 
       removeExperience, 
+      updateExperience,
       addEducation,
       removeEducation,
+      updateEducation,
+      saveVersion,
+      loadVersion,
+      deleteVersion,
       setSuggestions, 
       applySuggestion 
     }}>
@@ -243,3 +300,6 @@ export const useCVContext = () => {
   if (!context) throw new Error('useCVContext must be used within a CVProvider');
   return context;
 };
+
+// Also export as useCVStore for backward compatibility and semantic clarity
+export const useCVStore = useCVContext;

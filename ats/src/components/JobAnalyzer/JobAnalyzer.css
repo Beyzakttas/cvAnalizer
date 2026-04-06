@@ -112,28 +112,6 @@
 }
 
 /* Analyze Button */
-.btn-primary-large {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 0.85rem 2rem;
-  background: linear-gradient(135deg, var(--primary), #8b5cf6);
-  color: white;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  border: none;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
-}
-
-.btn-primary-large:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
-}
-
 .btn-primary-large:disabled {
   opacity: 0.6;
   cursor: wait;
@@ -249,6 +227,36 @@
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.25);
   color: #34d399;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.keyword-tag.match button {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.keyword-tag.match button:hover {
+  background: #10b981;
+  color: white;
+}
+
+.section-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
 }
 
 .empty-results {
@@ -274,33 +282,37 @@
   font-style: italic;
 }
 
-/* Next Step Button */
+/* Shared Actions at the Bottom */
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--glass-border);
+}
+
 .btn-next-step {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1.75rem;
   background: var(--primary);
   color: white;
   border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
   border: none;
-  transition: all 0.2s ease;
-  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
 }
 
 .btn-next-step:hover {
   background: var(--primary-hover);
-  transform: translateY(-1px);
-}
-
-/* Back Button */
-.step-actions {
-  display: flex;
-  padding-top: 0.5rem;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
 }
 
 .btn-back {
@@ -321,17 +333,6 @@
 .btn-back:hover {
   border-color: var(--primary);
   color: var(--primary);
-}
-
-/* Loader spinner */
-.loader {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: rotate 0.8s linear infinite;
-  display: inline-block;
 }
 
 .spin {

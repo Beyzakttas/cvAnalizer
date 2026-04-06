@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Briefcase, MapPin, Globe, ExternalLink, Sparkles, Loader2, ArrowRight } from 'lucide-react';
-import { useCVStore } from '../../store/useCVStore';
+import { useCVStore } from '../../store/CVContext';
+import { searchJobs } from '../../utils/jinaService';
 import './JobSearch.css';
 
 export const JobSearch = ({ onAnalyzeJob, onNext }) => {
@@ -24,36 +25,8 @@ export const JobSearch = ({ onAnalyzeJob, onNext }) => {
     setIsLoading(true);
     setJobs([]);
     try {
-      let platformQuery = '';
-      if (activePlatform === 'linkedin') platformQuery = ' site:linkedin.com/jobs';
-      else if (activePlatform === 'kariyer') platformQuery = ' site:kariyer.net';
-      else if (activePlatform === 'indeed') platformQuery = ' site:indeed.com';
-
-      const searchTerm = `${query} ${location} ${platformQuery} iş ilanları`.trim();
-      const response = await fetch(`https://s.jina.ai/${encodeURIComponent(searchTerm)}`, {
-        headers: { 
-          'Accept': 'application/json',
-          'X-With-Images-Summary': 'true' 
-        }
-      });
-      
-      if (response.status === 401 || response.status === 402) {
-        throw new Error('API LIMIT: Ücretsiz API limiti doldu veya anahtar gerekli.');
-      }
-      
-      const data = await response.json();
-      
-      // Clean up and format results
-      const formattedJobs = (data.data || []).map(job => {
-        let source = 'İlan';
-        if (job.url.includes('linkedin')) source = 'LinkedIn';
-        else if (job.url.includes('kariyer.net')) source = 'Kariyer.net';
-        else if (job.url.includes('indeed')) source = 'Indeed';
-        
-        return { ...job, source };
-      });
-
-      setJobs(formattedJobs);
+      const results = await searchJobs(query, location, activePlatform);
+      setJobs(results);
     } catch (err) {
       console.warn('Search error - showing fallback:', err);
       // Premium Demo Fallback
@@ -69,7 +42,6 @@ export const JobSearch = ({ onAnalyzeJob, onNext }) => {
   return (
     <div className="job-search-container">
       <header className="search-header glass animate-fade-in">
-        <Sparkles size={24} color="var(--primary)" />
         <h1>İş İlanı Gezgini</h1>
         <p>Yapay zeka desteğiyle binlerce ilan arasından size en uygun olanı bulun.</p>
         
@@ -136,8 +108,8 @@ export const JobSearch = ({ onAnalyzeJob, onNext }) => {
         )}
       </div>
 
-      <div className="step-skip">
-        <button onClick={onNext} className="btn-outline">
+      <div className="form-actions" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--glass-border)' }}>
+        <button type="button" onClick={onNext} className="btn-outline">
           İlanım Var, Direkt CV Hazırla <ArrowRight size={18} />
         </button>
       </div>

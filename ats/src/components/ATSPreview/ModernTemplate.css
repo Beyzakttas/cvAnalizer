@@ -1,7 +1,7 @@
 /* Modern Template - Designer Layout */
 .cv-document.modern {
-  display: grid;
-  grid-template-columns: 1fr 2.5fr;
+  display: flex;
+  flex-direction: column;
   padding: 0 !important;
   background: #fdfdfd !important;
   color: #2c3e50 !important;
@@ -10,58 +10,62 @@
 }
 
 .cv-document.modern .cv-header {
-  grid-column: 1 / -1;
   background: #111;
   color: white;
-  padding: 3rem;
+  padding: 4rem 3rem;
   margin: 0;
-  text-align: left;
+  text-align: center;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1.5rem;
   align-items: center;
   border-bottom: none;
 }
 
 .cv-document.modern .cv-header h1 {
-  font-size: 32pt;
+  font-size: 36pt;
   margin: 0;
   font-weight: 800;
   letter-spacing: -2px;
   color: white !important;
+  text-transform: uppercase;
 }
 
 .cv-document.modern .cv-contact {
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.5rem;
-  font-size: 9pt;
-  justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 9.5pt;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .cv-document.modern .cv-contact span {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
-/* Sidebar Section */
-.cv-document.modern .cv-section:last-of-type {
-  background: #f8f9fa;
-  padding: 2.5rem;
-  height: 100%;
-}
-
-/* Main Column Content */
-.cv-document.modern section:not(:last-of-type) {
-  padding: 2.5rem;
+/* Modern Template Layout Assignments - Centered Flow */
+.cv-document.modern .cv-section {
+  padding: 2.5rem 4rem;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .cv-document.modern .section-title {
-  color: var(--primary, #4f46e5);
-  border-bottom: 2px solid #eee;
+  color: #111 !important;
+  border-bottom: 2px solid #ddd;
   padding-bottom: 0.5rem;
   font-size: 14pt;
   margin-bottom: 1.5rem;
+  text-align: center; /* Centered titles per user request */
+}
+
+[data-theme='dark'] .cv-document.modern .section-title {
+  color: #111 !important;
 }
 
 .cv-document.modern .cv-item {
@@ -83,7 +87,7 @@
 
 .cv-document.modern .cv-item-header strong {
   font-size: 13pt;
-  color: #111;
+  color: #111 !important; 
 }
 
 .cv-document.modern .cv-item-header span {
@@ -92,16 +96,42 @@
   font-size: 9pt;
 }
 
+.cv-document.modern .cv-summary-section {
+  padding: 1rem 4rem; /* Match section padding */
+  margin-bottom: 1rem;
+}
+
+/* Remove special styling for summary to match other sections */
+[data-theme='dark'] .cv-document.modern .cv-summary-section {
+  background: transparent;
+}
+
+.cv-document.modern .cv-summary-section p {
+  font-size: 9pt; /* Perfect match with job descriptions */
+  line-height: 1.4;
+  color: #2c3e50 !important;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Remove dark text override */
+[data-theme='dark'] .cv-document.modern .cv-summary-section p {
+  color: #2c3e50 !important;
+}
+
 .cv-document.modern .skills-line {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center; /* Center skills as well */
   gap: 0.5rem;
 }
 
 /* Modern Template Print Adjustments */
 @media print {
   .cv-document.modern {
-    grid-template-columns: 30% 70%;
-    -webkit-print-color-adjust: exact;
+    display: flex !important;
+    flex-direction: column !important;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
   }
 }
